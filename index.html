@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Atlassian Authorization Code Flow Example</title>
+  </head>
+  <body>
+    <h1>AtlassianSS Authorization Code Flow Example</h1>
+    <p>
+      Click the button below to log in with Atlassian and fetch your account details.
+    </p>
+    <button onclick="handleLogin()">Log In</button>
+    <button onclick="handleLogout()">Log Out</button>
+    <div id="output"></div>
+
+    <script>
+      const clientID = "SeJnSDVwzLTwgf7vjk32TKjBzGu122Ug";
+      const redirectURI = window.location.href;
+
+      function handleLogin() {
+        const authorizeURL = `https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=${clientID}&redirect_uri=${redirectURI}&scope=read:me+read:jira-user&response_type=code&prompt=consent`;
+        window.location.href = authorizeURL;
+      }
+
+      function handleLogout() {
+        fetch('https://api.atlassian.com/oauth/token/access', {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+          }
+        })
+        .then(() => {
+          localStorage.removeItem('accessToken');
+          showOutput('Logged out successfully.');
+        })
+        .catch((error) => {
+          showOutput(`Error logging out: ${error}`);
+        });
+      }
+
+      function handleAuthorizationCode() {
+        const search = window.location.search;
+        const params = new URLSearchParams(search);
+        const authorizationCode = params.get('code');
+
+        fetch('https://auth.atlassian.com/oauth/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            grant_type: 'authorization_code',
+            client_id: clientID,
+            client_secret: 'ATOAZjRWk7sVTX3Zn9HQYxRljHrjKHEFnCLXsUQLCXTgQvkmT9C4-uAYXYafozSqmfBZBE90AD20',
+            code: authorizationCode,
+            redirect_uri: redirectURI
+          })
+        })
+        .then((response) => {
+          response.json().then((json) => {
+            localStorage.setItem('accessToken', json.access_token);
+            fetch('https://api.atlassian.com/oauth/token/accessible-resources', {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+              }
+            })
+            .then((response) => {
+              response.json().then((json) => {
+                const name = json[0].name;
+                showOutput(`Your Name: ${name}`);
+              });
+            })
+            .catch((error) => {
+              showOutput(`Error fetching accessible resources: ${error}`);
+            });
+          });
+        })
+        .catch((error) => {
+          showOutput(`Error fetching access token: ${error}`);
+        });
+      }
+
+      function showOutput(message) {
+        const output = document.getElementById('output');
+        output.innerText = message;
+      }
+
+      // Check if the page was loaded after a successful login
+      if (window.location.search.includes('code=')) {
+        handleAuthorizationCode();
+      }
+    </script>
+  </body>
+</html>
