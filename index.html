@@ -53,9 +53,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accessToken}`,
                     'Access-Control-Allow-Origin': '*'
-                },
-                body: JSON.stringify({
-                    token: accessToken
+                }
                 })
             })
             .then((response) => {
