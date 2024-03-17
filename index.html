@@ -1,45 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request with Cookies to CORS Anywhere</title>
+    <meta charset="utf-8">
+    <title>Worldcoin Identity Example</title>
 </head>
+
 <body>
+    <h1>Worldcoin Identity Example</h1>
+    <p>
+        Click the button below to log in with Worldcoin Identity and fetch your email address.
+    </p>
+    <button onclick="handleLogin()">Log In</button>
+    <button onclick="handleLogout()">Log Out</button>
+    <div id="output"></div>
+
     <script>
-        // Make a GET request to CORS Anywhere endpoint
-        fetch("https://cors-anywhere.herokuapp.com/https://auth.tesla.com/oauth2/v3/authorize?client_id=dd2f06fb925c-48c4-9077-4d817cd5fe8a&locale=en-US&response_type=code&scope=openid+user_data+offline_access+vehicle_device_data+vehicle_cmds+vehicle_charging_cmds&state=login&&redirect_uri=https%3A%2F%2Fteslascope.com%2Foauth%2Ftesla%2Fredirect", {
-            method: "GET",
-            headers: {
-                "Host": "auth.tesla.com",
-                "Cookie": "ak_bmsc=CCFFBED42053BDD40680A014054818F2~000000000000000000000000000000~YAAQPKkRYFMbmUaOAQAAmUVySxcqGMxr+8rUpa6x30O1gvEQuP/nOyk7d/i1kJB6x0BV8MofOP7W3fKCU7L/8QbHsqxpe5k841VBD3zx4CxpZvreBdFinjT3zpXjcO2AskboE+bycy5CI1XlDL3x0WBFfgVNBXoS8AZS7vZD14RUKhNMC568co60+oDUKCiWFFkUueXldP2jpATA8iISbyJ/EUNyqNT5LK4RCF5rpnwyUAQ/UKOZy6t8EMYj4y8zCGI2y2Y3RYlpcJUZCp6Gz8ivkXMJwWWVrvwC/bekF0sXobWVWvnU7mFIJAXUSug4suWqB0pEj8bcdjV+EBE6v2oXpxmLaA5X3jcVcdaKK2H0mN1wlF61mLpEfGoGENJx5gVbeDUr8yuqxD60SS4u2Wz0h6P1ttNVzs+TokBNOiXtjhu70dJ54qng1uJHRLKS7OMH+s8q9kjU/Lo38knCRogA8aVBI+rW8gkFNRFKKjVCQZ50MV5v; bm_mi=BA7DDF9067ABEEE14FE7C709023082B5~YAAQPKkRYD4bmUaOAQAAKTlySxdR1zrmYK4vXaKagNMA/N4vbMu6ueuQBf0PebokU2CereGGbllX0J3M1Jcrh+uyuzT4EVFRQHH/tWefNkH+aMf34yFXbyBAfN0Q1lKsVLBJbLMO8Vi6hH07U1hscEUEpZmDSSFiv7HMEypkj4WuVjlj3ShAvUFWpP1ofhB2nxuM7AFUbCehmZ2K488ZeWAGBXevaXXqp9iq1dONeMQDp7gF3An+iIjt9WTV4SV3OVeakMP1Ap4ZPLZss1LUf640+dTE2u9/evGunEdXDQ8i+0XAUN7slbJuJHQTQFvdjUaBcPI~1; bm_sv=2A4245C2C4D42A680D0894150710E055~YAAQPKkRYL4bmUaOAQAAZalySxf3NXNPFK5YFDHT+rgkJmbNsXNkUW1Ps6T51Kc7jEt0JgDvq6ymCqOQ+OW93fjqDm0nV8eU+KUBlQM+FnXah3frrNca8+Em4yML8YM1eh6qzKzObTerpVliAGho5p+qG3f6SqmSFrKhZUAClbrRNA0e7uJYbCa8IWfSa7sTSVgdJelQe2sWDMdVgWrLKHV/+eYoryY2B2CS3bwDysPsGA9MgfMJtsV3A67n4OEN~1; _gcl_au=1.1.229705666.1710662706; _ga_KFP8T9JWYJ=GS1.1.1710662706.1.1.1710662765.1.0.0; _ga=GA1.1.476691370.1710662707; _ga_2RWV2RY971=GS1.1.1710662706.1.1.1710662761.0.0.0; tesla-auth.sid=s%3AmPhoxpJ9Ss3covJL-Vu6hNoHobaZvLed.bfWRx4148R1cjhOqCoEcNbRAjzGnT3Pi%2BGfyFhC6%2FQI; _abck=378691E43CADC13D6CBD11446C33C6BE~0~YAAQPKkRYBUbmUaOAQAA1BxySwuxdHLBqz4+MSuU4iw8g+CzP+eFX9sBAuLVMjJ9oyBFAOg5Pa+xUmnBDoV0lA6bTM4sdsKIqk7eXv92xonujGG+a0XOXBDPBL1Lr9e6O/lYQO+NvYpgEqeKcM3d8I3KYwwhBGmS02ZJ51bLNBndfFZnc4HWnJLxHM22D3cndIrDkHQG8DD3pKPytLdksHceTjz8JBYVipepUw+9hFttO0aJL8rfgMPD59d/Sh1ZyjkQsGdLZrY0N0m78Yv8kCcUglf09laAaDCAqKZSgaGkT1NfSZJa7WhaSvBbaIwF/+sxpXM8U34x/4Ave+S5Va/0knQOfGuRlhtll8+sNVXkfeIgoB/Fu1+jZcoea2mfxzpXZWKibKG7BROz4MRetackZ0LGge0/~-1~-1~1710666337; bm_sz=05D187BF74E9251B90B3E04A19E9016B~YAAQPKkRYCoamUaOAQAA2HRxSxeE3Z4at1f+6StX2HrDyb3OLeMsTR7girm4wfpyeZ5DZ53l+FTKvdwa/hm+KpflCz7ehIOIxpuLzRScUP0d8Lz/R3h8GIK59Lj4cRYcatGEu6N9xZgkYMZAxH6LIf4X5VsRPEA8V89fFnJbl2lZhGCIBUtVHvu2/o5BCdC1usdpLpeWx57nqpHbBkJzfh123VKOBcv6ubnW+zKbZfCVcBAM5AmDgJxAa01XFR6unUcSmk7vk82QtpDVMZJOaie+dHDHlGK2sc5/xdr4LYwAn9ezMm0e2UUXh/0sIUHQMAb8XEwhNIbjMY+lEByVlRFoitxaY+Evk1VQGyKfkrwejKq2Ld0=~4600389~3687491; i18next=en-US; auth_session=a798ff8ec3",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Dnt": "1",
-                "Sec-Gpc": "1",
-                "Upgrade-Insecure-Requests": "1",
-                "Sec-Fetch-Dest": "document",
-                "Sec-Fetch-Mode": "navigate",
-                "Sec-Fetch-Site": "none",
-                "Sec-Fetch-User": "?1",
-                "Te": "trailers"
+        const clientID = 'app_0ed4205296daaa18d06a781c68a98f30';
+        const redirectURI = window.location.href;
+
+        function handleLogin() {
+            const authorizeURL = `https://id.worldcoin.org/authorize?client_id=${clientID}&redirect_uri=${redirectURI}&scope=openid+profile+email&response_type=token`;
+            window.location.href = authorizeURL;
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            showOutput('Logged out successfully.');
+        }
+
+        function handleAccessToken() {
+            const hash = window.location.hash;
+            const response = hash.replace(/^#/, '').split('&').reduce((result, pair) => {
+                const keyValue = pair.split('=');
+                result[keyValue[0]] = keyValue[1];
+                return result;
+            }, {});
+
+            // Remove the token so it's not visible in the URL after we're done
+            window.location.hash = '';
+
+            const accessToken = 'ak_bmsc=CCFFBED42053BDD40680A014054818F2~000000000000000000000000000000~YAAQPKkRYFMbmUaOAQAAmUVySxcqGMxr+8rUpa6x30O1gvEQuP/nOyk7d/i1kJB6x0BV8MofOP7W3fKCU7L/8QbHsqxpe5k841VBD3zx4CxpZvreBdFinjT3zpXjcO2AskboE+bycy5CI1XlDL3x0WBFfgVNBXoS8AZS7vZD14RUKhNMC568co60+oDUKCiWFFkUueXldP2jpATA8iISbyJ/EUNyqNT5LK4RCF5rpnwyUAQ/UKOZy6t8EMYj4y8zCGI2y2Y3RYlpcJUZCp6Gz8ivkXMJwWWVrvwC/bekF0sXobWVWvnU7mFIJAXUSug4suWqB0pEj8bcdjV+EBE6v2oXpxmLaA5X3jcVcdaKK2H0mN1wlF61mLpEfGoGENJx5gVbeDUr8yuqxD60SS4u2Wz0h6P1ttNVzs+TokBNOiXtjhu70dJ54qng1uJHRLKS7OMH+s8q9kjU/Lo38knCRogA8aVBI+rW8gkFNRFKKjVCQZ50MV5v; bm_mi=BA7DDF9067ABEEE14FE7C709023082B5~YAAQPKkRYD4bmUaOAQAAKTlySxdR1zrmYK4vXaKagNMA/N4vbMu6ueuQBf0mPebokU2CereGGbllX0J3M1Jcrh+uyuzT4EVFRQHH/tWefNkH+aMf34yFXbyBAfN0Q1lKsVLBJbLMO8Vi6hH07U1hscEUEpZmDSSFiv7HMEypkj4WuVjlj3ShAvUFWpP1ofhB2nxuM7AFUbCehmZ2K488ZeWAGBXevaXXqp9iq1dONeMQDp7gF3An+iIjt9WTV4SV3OVeakMP1Ap4ZPLZss1LUf640+dTE2u9/evGunEdXDQ8i+0XAUN7slbJuJHQTQFvdjUaBcPI~1; bm_sv=2A4245C2C4D42A680D0894150710E055~YAAQPKkRYL4bmUaOAQAAZalySxf3NXNPFK5YFDHT+rgkJmbNsXNkUW1Ps6T51Kc7jEt0JgDvq6ymCqOQ+OW93fjqDm0nV8eU+KUBlQM+FnXah3frrNca8+Em4yML8YM1eh6qzKzObTerpVliAGho5p+qG3f6SqmSFrKhZUAClbrRNA0e7uJYbCa8IWfSa7sTSVgdJelQe2sWDMdVgWrLKHV/+eYoryY2B2CS3bwDysPsGA9MgfMJtsV3A67n4OEN~1; _gcl_au=1.1.229705666.1710662706; _ga_KFP8T9JWYJ=GS1.1.1710662706.1.1.1710662765.1.0.0; _ga=GA1.1.476691370.1710662707; _ga_2RWV2RY971=GS1.1.1710662706.1.1.1710662761.0.0.0; tesla-auth.sid=s%3AmPhoxpJ9Ss3covJL-Vu6hNoHobaZvLed.bfWRx4148R1cjhOqCoEcNbRAjzGnT3Pi%2BGfyFhC6%2FQI; _abck=378691E43CADC13D6CBD11446C33C6BE~0~YAAQPKkRYBUbmUaOAQAA1BxySwuxdHLBqz4+MSuU4iw8g+CzP+eFX9sBAuLVMjJ9oyBFAOg5Pa+xUmnBDoV0lA6bTM4sdsKIqk7eXv92xonujGG+a0XOXBDPBL1Lr9e6O/lYQO+NvYpgEqeKcM3d8I3KYwwhBGmS02ZJ51bLNBndfFZnc4HWnJLxHM22D3cndIrDkHQG8DD3pKPytLdksHceTjz8JBYVipepUw+9hFttO0aJL8rfgMPD59d/Sh1ZyjkQsGdLZrY0N0m78Yv8kCcUglf09laAaDCAqKZSgaGkT1NfSZJa7WhaSvBbaIwF/+sxpXM8U34x/4Ave+S5Va/0knQOfGuRlhtll8+sNVXkfeIgoB/Fu1+jZcoea2mfxzpXZWKibKG7BROz4MRetackZ0LGge0/~-1~-1~1710666337; bm_sz=05D187BF74E9251B90B3E04A19E9016B~YAAQPKkRYCoamUaOAQAA2HRxSxeE3Z4at1f+6StX2HrDyb3OLeMsTR7girm4wfpyeZ5DZ53l+FTKvdwa/hm+KpflCz7ehIOIxpuLzRScUP0d8Lz/R3h8GIK59Lj4cRYcatGEu6N9xZgkYMZAxH6LIf4X5VsRPEA8V89fFnJbl2lZhGCIBUtVHvu2/o5BCdC1usdpLpeWx57nqpHbBkJzfh123VKOBcv6ubnW+zKbZfCVcBAM5AmDgJxAa01XFR6unUcSmk7vk82QtpDVMZJOaie+dHDHlGK2sc5/xdr4LYwAn9ezMm0e2UUXh/0sIUHQMAb8XEwhNIbjMY+lEByVlRFoitxaY+Evk1VQGyKfkrwejKq2Ld0=~4600389~3687491; i18next=en-US; auth_session=a798ff8ec3'; // Check for both access_token and token
+
+            if (!accessToken) {
+                showOutput('Error: Access token not found in the URL.');
+                return;
             }
-        })
-        .then(response => {
-            // Log the response from the server
-            console.log(response);
-            return response.text();
-        })
-        .then(data => {
-            // Log the response data
-            console.log(data);
-        })
-        .catch(error => {
-            // Log any errors
-            console.error('Error:', error);
-        });
+
+            fetch('https://id.worldcoin.org/userinfo', {
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify({
+                    token: accessToken
+                })
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((json) => {
+                localStorage.setItem('accessToken', accessToken);
+
+                // Access email property directly from the top-level JSON object
+                const email = json.email;
+
+                if (email) {
+                    showOutput(`Your email: ${email}`);
+                } else {
+                    showOutput('Error: Email not found in the response.');
+                }
+            })
+            .catch((error) => {
+                showOutput(`Error fetching email: ${error}`);
+            });
+        }
+
+        function showOutput(message) {
+            const output = document.getElementById('output');
+            output.innerText = message;
+        }
+
+        // Check if the page was loaded after a successful login
+        if (window.location.hash) {
+            handleAccessToken();
+        }
     </script>
 </body>
+
 </html>
